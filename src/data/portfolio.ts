@@ -19,6 +19,8 @@ export const profile = {
   "email": "prudhviraj729@gmail.com",
   "phone": "6302610681",
   "links": {
+    "leetcode": "https://leetcode.com/u/Bavigadda_Prudhviraj/",
+    "geeksforgeeks": "https://www.geeksforgeeks.org/profile/bavigadda852prudhviraj?tab=overview",
     "linkedin": "https://www.linkedin.com/in/bavigadda-prudhviraj-822568210/",
     "github": "https://github.com/Bavigadda-Prudhviraj",
     "hackerrank": "https://www.hackerrank.com/profile/PRUDHVIRAJ729",

@@ -19,8 +19,13 @@ export default function FinalCTA({ onReplay }: { onReplay: () => void }) {
     { label: 'GitHub', href: profile.links.github, cursor: 'link' },
     { label: 'Email', href: `mailto:${profile.email}`, cursor: 'link' },
     { label: 'Phone', href: `tel:+91${profile.phone}`, cursor: 'link' },
-    { label: 'HackerRank', href: profile.links.hackerrank, cursor: 'link' },
+  ];
+
+  const codingProfiles: typeof ctas = [
     { label: 'Scaler', href: profile.links.scaler, cursor: 'link' },
+    { label: 'LeetCode', href: profile.links.leetcode, cursor: 'link' },
+    { label: 'GeeksforGeeks', href: profile.links.geeksforgeeks, cursor: 'link' },
+    { label: 'HackerRank', href: profile.links.hackerrank, cursor: 'link' },
   ];
 
   return (
@@ -54,33 +59,39 @@ export default function FinalCTA({ onReplay }: { onReplay: () => void }) {
         <p className="mt-2 text-xs font-semibold tracking-[0.4em] text-mist sm:text-sm">{profile.role.toUpperCase()}</p>
       </motion.div>
 
-      <motion.div
-        className="relative mt-10 flex flex-wrap justify-center gap-3"
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
-        transition={{ staggerChildren: 0.08, delayChildren: 0.35 }}
-      >
-        {ctas.map((c) => (
-          <motion.div key={c.label} variants={{ hidden: { opacity: 0, y: 20, scale: 0.9 }, show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: EASE } } }}>
-            <Magnetic>
-              <a
-                href={c.href}
-                target={c.href.startsWith('http') ? '_blank' : undefined}
-                rel={c.href.startsWith('http') ? 'noreferrer' : undefined}
-                data-cursor={c.cursor}
-                className={`flex min-h-12 items-center gap-2 rounded-full px-7 text-sm font-bold tracking-[0.12em] transition ${
-                  c.primary ? 'bg-crimson text-white shadow-[0_0_50px_rgba(229,19,43,0.5)] hover:bg-crimson-2' : 'border border-white/25 text-bone hover:border-bone hover:bg-white/10'
-                }`}
-              >
-                {c.primary && <span>▶</span>}
-                {c.label.toUpperCase()}
-                {!c.primary && <span className="text-mist">↗</span>}
-              </a>
-            </Magnetic>
-          </motion.div>
+      <div className="relative mt-10 flex w-full flex-col gap-3">
+        {[ctas, codingProfiles].map((row, rowIndex) => (
+          <motion.div
+            key={rowIndex}
+            className="flex flex-wrap justify-center gap-3"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            transition={{ staggerChildren: 0.08, delayChildren: 0.35 }}
+          >
+            {row.map((c) => (
+              <motion.div key={c.label} variants={{ hidden: { opacity: 0, y: 20, scale: 0.9 }, show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: EASE } } }}>
+                <Magnetic>
+                  <a
+                    href={c.href}
+                    target={c.href.startsWith('http') ? '_blank' : undefined}
+                    rel={c.href.startsWith('http') ? 'noreferrer' : undefined}
+                    data-cursor={c.cursor}
+                    className={`flex min-h-12 items-center gap-2 rounded-full px-7 text-sm font-bold tracking-[0.12em] transition ${
+                      c.primary ? 'bg-crimson text-white shadow-[0_0_50px_rgba(229,19,43,0.5)] hover:bg-crimson-2' : 'border border-white/25 text-bone hover:border-bone hover:bg-white/10'
+                    }`}
+                  >
+                    {c.primary && <span>▶</span>}
+                    {c.label.toUpperCase()}
+                    {!c.primary && <span className="text-mist">↗</span>}
+                  </a>
+                </Magnetic>
+              </motion.div>
         ))}
       </motion.div>
+
+        ))}
+      </div>
 
       <div className="relative mt-16 flex flex-wrap justify-center gap-6 text-xs font-semibold tracking-[0.24em] text-smoke">
         <button type="button" onClick={() => scrollTo(0, { offset: 0 })} className="hover:text-bone">
