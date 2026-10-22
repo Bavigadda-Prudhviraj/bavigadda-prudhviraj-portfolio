@@ -17,12 +17,14 @@ import Skills from './components/Skills';
 import Achievements from './components/Achievements';
 import ResumeSection from './components/ResumeViewer';
 import FinalCTA from './components/FinalCTA';
+import FloatingHire from './components/FloatingHire';
 import { EASE } from './components/fx';
 
 // Overlays are only needed on demand — split them out of the first load.
 const PlayIntro = lazy(() => import('./components/PlayIntro'));
 const ProjectModal = lazy(() => import('./components/ProjectModal'));
 const ResumeModal = lazy(() => import('./components/ResumeModal'));
+const HireMeModal = lazy(() => import('./components/HireMeModal'));
 
 type Stage = 'opening' | 'profiles' | 'home';
 
@@ -52,6 +54,7 @@ function Series() {
   const [playing, setPlaying] = useState(false);
   const [project, setProject] = useState<Project | null>(null);
   const [resumeOpen, setResumeOpen] = useState(false);
+  const [hireOpen, setHireOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const { scrollTo, lock, unlock } = useSmoothScroll();
 
@@ -92,6 +95,7 @@ function Series() {
   const closeIntro = useCallback(() => setPlaying(false), []);
   const closeProject = useCallback(() => setProject(null), []);
   const closeResume = useCallback(() => setResumeOpen(false), []);
+  const closeHire = useCallback(() => setHireOpen(false), []);
 
   const sections: Record<SectionId, ReactNode> = {
     about: <About />,
@@ -115,7 +119,7 @@ function Series() {
 
       {stage === 'home' && (
         <motion.div initial={{ opacity: 0, scale: 1.03, filter: 'blur(10px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} transition={{ duration: 1, ease: EASE }}>
-          <Navbar order={order} profileId={profileId} onSwitch={pickProfile} />
+          <Navbar order={order} profileId={profileId} onSwitch={pickProfile} onHire={() => setHireOpen(true)} />
           <main>
             <Hero key={`hero-${profileId}`} onPlay={() => setPlaying(true)} onResume={() => setResumeOpen(true)} profileId={profileId} />
             <ContinueWatching order={order} />
@@ -126,6 +130,7 @@ function Series() {
             ))}
             <FinalCTA onReplay={() => setStage('opening')} />
           </main>
+          <FloatingHire order={order} onHire={() => setHireOpen(true)} />
         </motion.div>
       )}
 
@@ -133,6 +138,7 @@ function Series() {
         <AnimatePresence>{playing && <PlayIntro key="intro" onClose={closeIntro} />}</AnimatePresence>
         <AnimatePresence>{project && <ProjectModal key="project" project={project} onClose={closeProject} onSwitch={setProject} />}</AnimatePresence>
         <AnimatePresence>{resumeOpen && <ResumeModal key="resume" onClose={closeResume} />}</AnimatePresence>
+        <AnimatePresence>{hireOpen && <HireMeModal key="hire" onClose={closeHire} />}</AnimatePresence>
       </Suspense>
 
       <AnimatePresence>

@@ -4,6 +4,7 @@ import { profile } from '../data/portfolio';
 import { useSmoothScroll } from '../hooks/smoothScroll';
 import { EASE, Magnetic, Particles } from './fx';
 import { SeriesMark } from './Poster';
+import ContactForm from './ContactForm';
 
 export default function FinalCTA({ onReplay }: { onReplay: () => void }) {
   const ref = useRef<HTMLElement>(null);
@@ -13,20 +14,21 @@ export default function FinalCTA({ onReplay }: { onReplay: () => void }) {
   const blur = useTransform(scrollYProgress, [0, 1], ['blur(16px)', 'blur(0px)']);
   const opacity = useTransform(scrollYProgress, [0.1, 0.9], [0, 1]);
 
-  const ctas = [
+  type Cta = { label: string; href: string; primary?: boolean; cursor: string };
+  const contact: Cta[] = [
     { label: "Let's Build", href: `mailto:${profile.email}?subject=${encodeURIComponent("Let's build something")}`, primary: true, cursor: 'play' },
     { label: 'LinkedIn', href: profile.links.linkedin, cursor: 'link' },
     { label: 'GitHub', href: profile.links.github, cursor: 'link' },
     { label: 'Email', href: `mailto:${profile.email}`, cursor: 'link' },
     { label: 'Phone', href: `tel:+91${profile.phone}`, cursor: 'link' },
   ];
-
-  const codingProfiles: typeof ctas = [
+  // Coding profiles share one row; any without a URL stay hidden.
+  const coding: Cta[] = [
     { label: 'Scaler', href: profile.links.scaler, cursor: 'link' },
     { label: 'LeetCode', href: profile.links.leetcode, cursor: 'link' },
     { label: 'GeeksforGeeks', href: profile.links.geeksforgeeks, cursor: 'link' },
     { label: 'HackerRank', href: profile.links.hackerrank, cursor: 'link' },
-  ];
+  ].filter((c) => c.href);
 
   return (
     <section id="contact" ref={ref} className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-4 py-24 text-center">
@@ -59,41 +61,38 @@ export default function FinalCTA({ onReplay }: { onReplay: () => void }) {
         <p className="mt-2 text-xs font-semibold tracking-[0.4em] text-mist sm:text-sm">{profile.role.toUpperCase()}</p>
       </motion.div>
 
-      <div className="relative mt-10 flex w-full flex-col gap-3">
-        {[ctas, codingProfiles].map((row, rowIndex) => (
-          <motion.div
-            key={rowIndex}
-            className="flex flex-wrap justify-center gap-3"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            transition={{ staggerChildren: 0.08, delayChildren: 0.35 }}
-          >
-            {row.map((c) => (
-              <motion.div key={c.label} variants={{ hidden: { opacity: 0, y: 20, scale: 0.9 }, show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: EASE } } }}>
-                <Magnetic>
-                  <a
-                    href={c.href}
-                    target={c.href.startsWith('http') ? '_blank' : undefined}
-                    rel={c.href.startsWith('http') ? 'noreferrer' : undefined}
-                    data-cursor={c.cursor}
-                    className={`flex min-h-12 items-center gap-2 rounded-full px-7 text-sm font-bold tracking-[0.12em] transition ${
-                      c.primary ? 'bg-crimson text-white shadow-[0_0_50px_rgba(229,19,43,0.5)] hover:bg-crimson-2' : 'border border-white/25 text-bone hover:border-bone hover:bg-white/10'
-                    }`}
-                  >
-                    {c.primary && <span>▶</span>}
-                    {c.label.toUpperCase()}
-                    {!c.primary && <span className="text-mist">↗</span>}
-                  </a>
-                </Magnetic>
-              </motion.div>
-        ))}
+      <motion.div
+        className="relative mt-10 flex flex-col items-center gap-3"
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        transition={{ staggerChildren: 0.08, delayChildren: 0.35 }}
+      >
+        <div className="flex flex-wrap justify-center gap-3">
+          {contact.map((c) => (
+            <CtaPill key={c.label} cta={c} />
+          ))}
+        </div>
+        <div className="flex flex-wrap justify-center gap-3">
+          {coding.map((c) => (
+            <CtaPill key={c.label} cta={c} />
+          ))}
+        </div>
       </motion.div>
 
-        ))}
-      </div>
+      <motion.div
+        className="relative mt-14 w-full max-w-xl rounded-2xl bg-ink-2/80 p-6 ring-1 ring-white/10 backdrop-blur sm:p-8"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-10% 0px' }}
+        transition={{ duration: 0.8, ease: EASE }}
+      >
+        <p className="text-left font-display text-3xl tracking-wide text-bone">Cast me in your next episode</p>
+        <p className="mb-5 mt-1 text-left text-sm text-mist">Hiring for a backend role? Drop the details and your email app does the rest.</p>
+        <ContactForm />
+      </motion.div>
 
-      <div className="relative mt-16 flex flex-wrap justify-center gap-6 text-xs font-semibold tracking-[0.24em] text-smoke">
+      <div className="relative mt-12 mb-20 flex flex-wrap justify-center gap-6 text-xs font-semibold tracking-[0.24em] text-smoke">
         <button type="button" onClick={() => scrollTo(0, { offset: 0 })} className="hover:text-bone">
           ↺ WATCH AGAIN
         </button>
@@ -111,5 +110,28 @@ export default function FinalCTA({ onReplay }: { onReplay: () => void }) {
         </p>
       </footer>
     </section>
+  );
+}
+
+function CtaPill({ cta: c }: { cta: { label: string; href: string; primary?: boolean; cursor: string } }) {
+  const external = c.href.startsWith('http');
+  return (
+    <motion.div variants={{ hidden: { opacity: 0, y: 20, scale: 0.9 }, show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: EASE } } }}>
+      <Magnetic>
+        <a
+          href={c.href}
+          target={external ? '_blank' : undefined}
+          rel={external ? 'noreferrer' : undefined}
+          data-cursor={c.cursor}
+          className={`flex min-h-12 items-center gap-2 whitespace-nowrap rounded-full px-6 text-sm font-bold tracking-[0.12em] transition sm:px-7 ${
+            c.primary ? 'bg-crimson text-white shadow-[0_0_50px_rgba(229,19,43,0.5)] hover:bg-crimson-2' : 'border border-white/25 text-bone hover:border-bone hover:bg-white/10'
+          }`}
+        >
+          {c.primary && <span>▶</span>}
+          {c.label.toUpperCase()}
+          {!c.primary && <span className="text-mist">↗</span>}
+        </a>
+      </Magnetic>
+    </motion.div>
   );
 }

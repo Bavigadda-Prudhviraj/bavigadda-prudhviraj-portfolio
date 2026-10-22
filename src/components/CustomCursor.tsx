@@ -51,10 +51,24 @@ export default function CustomCursor() {
   }, [enabled, x, y]);
 
   if (!enabled) return null;
-  const label = mode ? LABELS[mode] : null;
-  const size = label ? (mode === 'view' ? 72 : 52) : hoverLink ? 34 : 10;
+  const pill = mode === 'view';
+  // 'view' keeps a small dot on the pointer and shows a pill beside it, so the card text stays readable.
+  const label = mode && !pill ? LABELS[mode] : null;
+  const size = label ? 52 : pill ? 12 : hoverLink ? 34 : 10;
 
   return (
+    <>
+    <motion.div
+      aria-hidden
+      className="pointer-events-none fixed left-0 top-0 z-[200]"
+      style={{ x: sx, y: sy }}
+      animate={{ opacity: visible && pill ? 1 : 0, scale: pill ? (down ? 0.92 : 1) : 0.7 }}
+      transition={{ type: 'spring', stiffness: 420, damping: 30 }}
+    >
+      <span className="absolute left-4 top-4 flex items-center gap-1.5 whitespace-nowrap rounded-full border border-crimson-2/60 bg-black/55 px-3 py-1 text-[11px] font-bold tracking-[0.16em] text-bone shadow-[0_8px_24px_-8px_rgba(229,19,43,0.6)] backdrop-blur-md">
+        VIEW <span className="text-crimson-2">→</span>
+      </span>
+    </motion.div>
     <motion.div
       aria-hidden
       className="pointer-events-none fixed left-0 top-0 z-[200] flex items-center justify-center rounded-full"
@@ -64,7 +78,7 @@ export default function CustomCursor() {
         height: size,
         opacity: visible ? 1 : 0,
         scale: down ? 0.85 : 1,
-        backgroundColor: label ? 'rgba(229,19,43,0.92)' : hoverLink ? 'rgba(244,241,236,0.08)' : 'rgba(244,241,236,1)',
+        backgroundColor: label || pill ? 'rgba(229,19,43,0.92)' : hoverLink ? 'rgba(244,241,236,0.08)' : 'rgba(244,241,236,1)',
         borderColor: hoverLink && !label ? 'rgba(244,241,236,0.7)' : 'rgba(244,241,236,0)',
       }}
       transition={{ type: 'spring', stiffness: 420, damping: 30 }}
@@ -84,5 +98,6 @@ export default function CustomCursor() {
         )}
       </AnimatePresence>
     </motion.div>
+    </>
   );
 }

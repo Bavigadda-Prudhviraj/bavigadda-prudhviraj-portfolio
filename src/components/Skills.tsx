@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { skillCategories, skillEvidence, type Skill } from '../data/portfolio';
 import { EASE, SectionHeading } from './fx';
-import SkillIcon from './SkillIcon';
+import { hasSkillGlyph, SkillGlyph } from './skillGlyphs';
+import { brandColor, skillIcons } from './skillIcons';
 
 const HUES = ['#ff3d5a', '#4cc9ff', '#46e3a8', '#ffb547', '#b98bff', '#ff8a5c', '#7ee0ff'];
 
@@ -63,6 +64,9 @@ export default function Skills() {
 function SkillCard({ skill, hue }: { skill: Skill; hue: string }) {
   const [open, setOpen] = useState(false);
   const evidence = skillEvidence[skill.name];
+  // Line icons win over brand marks so generic skills (SQL, JPA, Loki…) match the rest of the set.
+  const glyph = hasSkillGlyph(skill.name);
+  const icon = glyph ? undefined : skillIcons[skill.name];
 
   return (
     <motion.button
@@ -82,13 +86,21 @@ function SkillCard({ skill, hue }: { skill: Skill; hue: string }) {
     >
       <div aria-hidden className="absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-0 blur-2xl transition duration-500 group-hover:opacity-60" style={{ background: hue }} />
       <motion.span
-        className="relative flex h-12 w-12 items-center justify-center rounded-lg"
+        className="relative flex h-12 w-12 items-center justify-center rounded-lg font-display text-2xl tracking-wide"
         style={{ background: `${hue}1f`, color: hue, boxShadow: `inset 0 0 0 1px ${hue}55` }}
         animate={open ? { rotate: [0, -8, 8, 0], scale: 1.08 } : { rotate: 0, scale: 1 }}
         transition={{ duration: 0.5 }}
         aria-hidden
       >
-        <SkillIcon name={skill.name} />
+        {glyph ? (
+          <SkillGlyph name={skill.name} color={hue} active={open} />
+        ) : icon ? (
+          <svg viewBox="0 0 24 24" className="h-6 w-6 transition-colors duration-300" style={{ fill: open ? brandColor(icon, hue) : hue }}>
+            <path d={icon.path} />
+          </svg>
+        ) : (
+          skill.mono
+        )}
       </motion.span>
       <span className="relative mt-4 flex items-center gap-2 text-[15px] font-semibold text-bone">
         {skill.name}

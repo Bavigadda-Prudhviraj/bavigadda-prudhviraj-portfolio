@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { projects, type Project } from '../data/portfolio';
 import { useScrollLock } from '../hooks/smoothScroll';
+import { useReducedMotionPref } from '../hooks/useMedia';
 import { EASE, Magnetic } from './fx';
 import { ProjectArt } from './Poster';
 
@@ -67,7 +68,7 @@ export default function ProjectModal({ project, onClose, onSwitch }: { project: 
             </button>
             <div className="absolute inset-x-0 bottom-0 px-5 pb-6 sm:px-10">
               <motion.p className="mb-2 flex items-center gap-2 text-[11px] font-bold tracking-[0.34em] text-bone/80" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-                <span className="font-display text-xl tracking-normal text-crimson-2">BP</span> ORIGINAL
+                <span className="font-display text-xl tracking-normal text-crimson-2">P</span> ORIGINAL
               </motion.p>
               <motion.h2
                 id={`title-${project.id}-modal`}
@@ -107,10 +108,19 @@ export default function ProjectModal({ project, onClose, onSwitch }: { project: 
               </motion.div>
             )}
 
+            {project.problem && (
+              <motion.section variants={block} className="mt-10 max-w-3xl border-l-2 pl-5" style={{ borderColor: project.palette.accent }}>
+                <h3 className="mb-2 text-[11px] font-bold uppercase tracking-[0.3em] text-crimson-2">The Problem</h3>
+                <p className="text-[15px] leading-relaxed text-bone/85">{project.problem}</p>
+              </motion.section>
+            )}
+
+            {project.flow && <FlowPipeline steps={project.flow} accent={project.palette.accent} />}
+
             {/* impact */}
             {project.metrics.length > 0 && <motion.section variants={block} className="mt-12">
               <h3 className="mb-4 text-[11px] font-bold uppercase tracking-[0.3em] text-crimson-2">Result / Impact</h3>
-              <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-white/10 sm:grid-cols-3 lg:grid-cols-5">
+              <div className="grid grid-cols-1 gap-px overflow-hidden rounded-xl bg-white/10 sm:[grid-template-columns:repeat(var(--cols),minmax(0,1fr))]" style={{ ['--cols' as string]: project.metrics.length }}>
                 {project.metrics.map((m, i) => (
                   <motion.div
                     key={m.label}
@@ -162,6 +172,19 @@ export default function ProjectModal({ project, onClose, onSwitch }: { project: 
                     ))}
                   </ul>
                 </motion.section>
+                {project.patterns && (
+                  <motion.section variants={block}>
+                    <h3 className="mb-4 text-[11px] font-bold uppercase tracking-[0.3em] text-crimson-2">Architecture & Patterns</h3>
+                    <ul className="space-y-2.5">
+                      {project.patterns.map((pt) => (
+                        <li key={pt} className="flex items-start gap-3 text-sm text-bone/85">
+                          <span style={{ color: project.palette.accent }}>◆</span>
+                          {pt}
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.section>
+                )}
               </div>
             </div>
 
@@ -192,5 +215,74 @@ export default function ProjectModal({ project, onClose, onSwitch }: { project: 
         </motion.div>
       </div>
     </motion.div>
+  );
+}
+
+/** "How it works" — the project's flow as a pipeline. A pulse travels the steps; hover or tap a step to pin it. */
+function FlowPipeline({ steps, accent }: { steps: { step: string; detail: string }[]; accent: string }) {
+  const reduced = useReducedMotionPref();
+  const [active, setActive] = useState(0);
+  const [pinned, setPinned] = useState(false);
+
+  useEffect(() => {
+    if (pinned || reduced) return;
+    const t = window.setInterval(() => setActive((i) => (i + 1) % steps.length), 1600);
+    return () => clearInterval(t);
+  }, [pinned, reduced, steps.length]);
+
+  return (
+    <motion.section variants={block} className="mt-12" onPointerLeave={() => setPinned(false)}>
+      <h3 className="mb-4 text-[11px] font-bold uppercase tracking-[0.3em] text-crimson-2">How It Works</h3>
+      <ol className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+        {steps.map((s, i) => {
+          const on = i === active;
+          const done = i < active;
+          return (
+            <li key={s.step} className="relative">
+              <button
+                type="button"
+                onPointerEnter={() => {
+                  setPinned(true);
+                  setActive(i);
+                }}
+                onFocus={() => {
+                  setPinned(true);
+                  setActive(i);
+                }}
+                onClick={() => {
+                  setPinned(true);
+                  setActive(i);
+                }}
+                aria-pressed={on}
+                className="relative h-full w-full overflow-hidden rounded-xl bg-ink p-3 text-left ring-1 transition duration-300"
+                style={{ boxShadow: on ? `0 0 0 1px ${accent}, 0 10px 30px -10px ${accent}88` : undefined, ['--tw-ring-color' as string]: on ? 'transparent' : 'rgba(255,255,255,0.1)' }}
+              >
+                <span className="flex items-center gap-2">
+                  <span
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold transition"
+                    style={{ background: on || done ? accent : 'rgba(255,255,255,0.08)', color: on || done ? '#07070a' : 'var(--color-mist)' }}
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="font-display text-xl leading-none tracking-wide text-bone">{s.step}</span>
+                </span>
+                <span className={`mt-2 block text-xs leading-snug transition ${on ? 'text-bone/90' : 'text-smoke'}`}>{s.detail}</span>
+                {on && !reduced && (
+                  <motion.span
+                    key={`pulse-${i}`}
+                    aria-hidden
+                    className="absolute bottom-0 left-0 h-[2px]"
+                    style={{ background: accent }}
+                    initial={{ width: '0%' }}
+                    animate={{ width: pinned ? '100%' : ['0%', '100%'] }}
+                    transition={{ duration: pinned ? 0.3 : 1.6, ease: 'linear' }}
+                  />
+                )}
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+    </motion.section>
   );
 }

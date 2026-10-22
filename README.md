@@ -50,12 +50,8 @@ This is a personal portfolio with a fictional streaming-platform look and is not
 
 Added the in-development Reliance Digital and JioMart Digital pricing automation platform under the current MobileProgramming.com / AJIO – Reliance Retail engagement. Project details include Java 21, Google Cloud Pub/Sub, Kafka, competitor analysis, margin and deal-price recommendations, performance benchmarking, message-volume-based autoscaling and processing hundreds of thousands of records within minutes. Related experience, highlights, journey, skills and intro slides are updated. The hero now also shows the in-progress Master of Science in Computer Science through Scaler. The supplied downloadable resume PDF remains the original file.
 
-The current engagement covers four pricing platforms: Offline Benchmarking, Online F&M, AJIO Pricing, and the Reliance Digital / JioMart Digital platform (in development). Ownership highlights, project summaries, experience, journey episodes and intro slides use this four-platform scope consistently.
+The current engagement covers four pricing platforms, described from their source code: Online F&L Pricing (AJIO), Electronics Price Match (Reliance Digital & JioMart, in development), Offline F&L Markdown (Trends) and Offline Price Benchmarking. Each project modal shows the problem, an animated "How it works" pipeline, contributions and architecture patterns. Claims not supported by the code (autoscaling, record volumes, downstream price publishing) were removed.
 
 Portrait prepared with built-in imagegen from the supplied photo. Edit brief: preserve identity, glasses, hair, expression and blue shirt; remove the black background to transparency and add subtle crimson edge lighting to match the existing dark cinematic design. Production assets: `public/assets/prudhviraj-portrait-{360,720,1000}.webp`.
 
 The `portrait-blend` CSS mask softly feathers the shirt sides below shoulder level and the lower edge in the hero, About, opening and intro reel. The upper head/hair region stays fully visible, and the source portrait and avatar crop are unchanged.
-
-Portfolio branding uses the capital BP monogram for Bavigadda Prudhviraj: BP SERIES in navigation, hero and footer; BP ORIGINAL on project cards and dialogs; and a matching BP favicon.
-
-All seven skill categories use local SVG icons from `react-icons` in place of letter abbreviations. Technology marks and concept symbols are mapped in `src/components/SkillIcon.tsx`, sized at 26 px and tinted with the existing category colour; full names and hover/tap evidence remain visible. Icons are bundled with the site and need no external image requests.

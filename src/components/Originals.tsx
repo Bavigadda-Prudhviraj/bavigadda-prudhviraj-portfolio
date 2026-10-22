@@ -19,11 +19,11 @@ function Intro() {
   return (
     <div className="flex w-full shrink-0 flex-col justify-center lg:w-[34vw]">
       <p className="mb-3 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.32em] text-crimson-2">
-        <span className="h-px w-8 bg-crimson-2" /> {projects.length} Originals · {projects[0].year}
+        <span className="h-px w-8 bg-crimson-2" /> {projects.length} Originals · Online & offline retail
       </p>
       <RevealText as="h2" text="ORIGINALS" className="font-display text-[clamp(3.5rem,9vw,8rem)] leading-[0.85] text-bone" />
       <p className="mt-4 max-w-sm text-[15px] leading-relaxed text-mist">
-        Four pricing platforms within my AJIO / Reliance Retail engagement — Offline Benchmarking, Online F&M, AJIO Pricing, and Reliance Digital / JioMart Digital — alongside backend services at Virtusa and a personal banking microservices application. Open any title for the full story.
+        Four pricing platforms from my AJIO / Reliance Retail engagement — Online F&L Pricing, Electronics Price Match, Offline F&L Markdown and Offline Price Benchmarking — alongside backend services at Virtusa and a personal banking microservices application. Open any title to see how it works.
       </p>
       <p className="mt-6 hidden text-xs tracking-[0.24em] text-smoke lg:block">SCROLL TO BROWSE →</p>
     </div>

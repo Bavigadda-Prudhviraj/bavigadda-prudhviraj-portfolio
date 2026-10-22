@@ -6,7 +6,17 @@ import { SeriesMark } from './Poster';
 import { ProfileAvatar } from './ProfileSelector';
 import { EASE } from './fx';
 
-export default function Navbar({ order, profileId, onSwitch }: { order: SectionId[]; profileId: ProfileId; onSwitch: (id: ProfileId) => void }) {
+export default function Navbar({
+  order,
+  profileId,
+  onSwitch,
+  onHire,
+}: {
+  order: SectionId[];
+  profileId: ProfileId;
+  onSwitch: (id: ProfileId) => void;
+  onHire: () => void;
+}) {
   const { scrollY } = useScroll();
   const [solid, setSolid] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -79,10 +89,15 @@ export default function Navbar({ order, profileId, onSwitch }: { order: SectionI
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => go('contact')}
-            className="hidden rounded-full border border-white/15 px-4 py-1.5 text-xs font-semibold tracking-[0.14em] text-bone transition hover:border-crimson-2 hover:text-crimson-2 sm:block"
+            onClick={onHire}
+            data-cursor="link"
+            className="relative flex items-center gap-1.5 rounded-full bg-crimson px-4 py-2 text-xs font-bold tracking-[0.14em] text-white shadow-[0_0_24px_rgba(229,19,43,0.45)] transition hover:bg-crimson-2"
           >
-            LET&apos;S BUILD
+            <span aria-hidden className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white/80" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
+            </span>
+            HIRE ME
           </button>
           <div className="relative" ref={menuRef}>
             <button
@@ -154,15 +169,19 @@ export default function Navbar({ order, profileId, onSwitch }: { order: SectionI
             exit={{ clipPath: 'inset(0 0 100% 0)' }}
             transition={{ duration: 0.45, ease: EASE }}
           >
-            {[{ id: 'top', label: 'Home' }, ...order.map((id) => ({ id, label: sectionMeta[id].nav })), { id: 'contact', label: "Let's Build" }].map((l, i) => (
+            {[{ id: 'top', label: 'Home' }, ...order.map((id) => ({ id, label: sectionMeta[id].nav })), { id: 'contact', label: "Let's Build" }, { id: 'hire', label: 'Hire Me' }].map((l, i) => (
               <motion.button
                 key={l.id}
                 type="button"
-                onClick={() => go(l.id)}
+                onClick={() => {
+                  if (l.id !== 'hire') return go(l.id);
+                  setMobileNav(false);
+                  onHire();
+                }}
                 initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.05 * i }}
-                className={`block w-full py-3 text-left font-display text-3xl tracking-wide ${active === l.id ? 'text-crimson-2' : 'text-bone'}`}
+                className={`block w-full py-3 text-left font-display text-3xl tracking-wide ${active === l.id || l.id === 'hire' ? 'text-crimson-2' : 'text-bone'}`}
               >
                 {l.label}
               </motion.button>

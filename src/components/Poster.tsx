@@ -88,6 +88,55 @@ export function ProjectArt({ project, className = '' }: { project: Project; clas
             <path d="M188 228 h190" strokeWidth="1" strokeOpacity="0.2" />
           </g>
         )}
+        {project.motif === 'tag' && (
+          <g fill="none" stroke={a}>
+            <path d="M232 52 h86 l40 40 l-74 74 l-52 -52 z" strokeWidth="2" strokeOpacity="0.85" />
+            <circle cx="262" cy="80" r="9" strokeWidth="2" />
+            <path d="M286 104 l-28 28 M262 104 a6 6 0 1 0 0.1 0 M290 128 a6 6 0 1 0 0.1 0" strokeWidth="2.5" strokeLinecap="round" />
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <g key={i}>
+                <rect x={198 + i * 30} y="214" width="22" height="16" rx="4" strokeOpacity={0.3 + i * 0.1} />
+                {i < 5 && <path d={`M${220 + i * 30} 222 h8`} strokeOpacity="0.5" />}
+              </g>
+            ))}
+          </g>
+        )}
+        {project.motif === 'radar' && (
+          <g fill="none" stroke={a}>
+            {[30, 60, 90].map((r) => (
+              <circle key={r} cx="290" cy="130" r={r} strokeWidth="1.4" strokeOpacity={0.9 - r / 120} />
+            ))}
+            <path d="M290 130 L370 92" strokeWidth="2" strokeOpacity="0.8" />
+            <circle cx="338" cy="104" r="6" fill="#ff3d5a" stroke="none" />
+            <circle cx="244" cy="96" r="6" fill="#ffb547" stroke="none" />
+            <circle cx="262" cy="190" r="6" fill={a} stroke="none" />
+            <circle cx="350" cy="168" r="4" fill={a} fillOpacity="0.6" stroke="none" />
+          </g>
+        )}
+        {project.motif === 'markdown' && (
+          <g fill="none" stroke={a}>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <rect key={i} x={206 + i * 32} y={70 + i * 22} width="20" height={150 - i * 22} rx="3" strokeWidth="1.6" fill={a} fillOpacity={0.08 + i * 0.05} strokeOpacity={0.4 + i * 0.12} />
+            ))}
+            <path d="M200 60 L370 196" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="10 6" />
+            <path d="M356 196 h16 v-16" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          </g>
+        )}
+        {project.motif === 'survey' && (
+          <g fill="none" stroke={a}>
+            <rect x="222" y="44" width="110" height="150" rx="10" strokeWidth="2" strokeOpacity="0.85" />
+            <rect x="256" y="36" width="42" height="16" rx="5" strokeWidth="1.6" />
+            {[0, 1, 2, 3].map((i) => (
+              <g key={i} transform={`translate(240 ${76 + i * 28})`}>
+                <rect width="14" height="14" rx="3" strokeOpacity="0.8" />
+                {i < 3 && <path d="M3 7 l3 3 l6 -7" strokeWidth="2" strokeLinecap="round" />}
+                <path d="M24 7 h50" strokeWidth="3" strokeLinecap="round" strokeOpacity={0.3 + i * 0.12} />
+              </g>
+            ))}
+            <circle cx="350" cy="196" r="26" strokeWidth="2" />
+            <path d="M369 215 l16 16" strokeWidth="4" strokeLinecap="round" />
+          </g>
+        )}
       </svg>
     </PosterBackdrop>
   );
@@ -97,8 +146,8 @@ export function ProjectArt({ project, className = '' }: { project: Project; clas
 export function SeriesMark({ className = '' }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-1.5 ${className}`}>
-      <svg viewBox="0 0 48 32" className="h-[1.1em] w-auto" aria-hidden>
-        <path d="M5 4v24h9a6 6 0 0 0 0-12H5m0-12h8a6 6 0 0 1 0 12M30 28V4h8a7 7 0 0 1 0 14h-8" fill="none" stroke="#e5132b" strokeWidth="3" strokeLinecap="round" />
+      <svg viewBox="0 0 24 32" className="h-[1.1em] w-auto" aria-hidden>
+        <path d="M6 28V4h7a7 7 0 0 1 0 14H6" fill="none" stroke="#e5132b" strokeWidth="4" strokeLinecap="round" />
       </svg>
       <span className="font-sans text-[0.62em] font-bold tracking-[0.36em] text-mist">SERIES</span>
     </span>
